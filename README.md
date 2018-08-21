@@ -1,4 +1,17 @@
 # Meta-tic-tac-toe
+**Play online:** [Github pages site](https://dkorpel.github.io/tictac/)
+
+**Play in terminal:** [Executable Releases](https://github.com/dkorpel/tictac/releases)
+
+Or **compile it**:
+```
+git clone https://github.com/dkorpel/tictac
+cd tictac
+dub run
+```
+
+--
+
 This is a port of a meta tic-tac-toe game written originally in pure x86_64 assembly in October 2015, now written in the D Programming Language. 
 
 The original only compiled on Linux and ran in qemu, but now it can be played either in a Windows / Linux terminal (using [scone](https://github.com/vladdeSV/scone) as backend) or in the browser (by compiling it to [WebAssembly in ldc](https://wiki.dlang.org/Generating_WebAssembly_with_LDC)). 
@@ -8,16 +21,6 @@ The port has these main goals:
 - Test the WebAssembly capabilities of D
 - Put it in a high level language so it's easier to extend
 
-**Play online:** [Github pages site](https://dkorpel.github.io/tictac/)
-
-**Play in terminal:** [Releases](https://github.com/dkorpel/tictac/releases) or `git clone dub run`
-
-Or **compile it**:
-```
-git clone https://github.com/dkorpel/tictac
-cd tictac
-dub run
-```
 
 ## Compiling
 
@@ -34,6 +37,7 @@ There's no WebAssembly target for dub currently, so for wasm, use the included b
 rdmd build wasm
 ```
 The resulting .wasm will be put in the `doc` folder where the webpage also resides.
+This webpage can be opened in FireFox locally, but Chrome doesn't allow the http request to a local file so the game won't load. You can use something like [live-server](https://www.npmjs.com/package/live-server) to still test it without deploying. 
 
 ## About the Game
 The idea of meta tic-tac-toe is explained here: [Ultimate-tic-tac-toe](https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe) 

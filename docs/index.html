@@ -64,40 +64,36 @@ function getColorString(color) {
 	return "#"+color.toString(16);
 }
 
-function drawRect(x0, y0, x1, y1, color, alpha) {
-	var a = ctx.globalAlpha;
-	ctx.globalAlpha = alpha;
+function drawRect(x0, y0, x1, y1, color) {
 	ctx.fillStyle = getColorString(color);
-	
 	ctx.fillRect(x0, y0, x1, y1);
-	
-	ctx.globalAlpha = a;
 }
 
-function drawLine(x0, y0, x1, y1, thickness, color, alpha) {
-	var a = ctx.globalAlpha;
-	ctx.globalAlpha = alpha;
+function drawLine(x0, y0, x1, y1, thickness, color) {
 	ctx.strokeStyle = getColorString(color);
-	
 	ctx.lineWidth=thickness;
 	ctx.beginPath();
 	ctx.moveTo(x0, y0);
 	ctx.lineTo(x1, y1);
 	ctx.stroke();
-	
-	ctx.globalAlpha = a;
 }
 
-function drawText(x, y, ptr, len, color, alpha) {
-	var a = ctx.globalAlpha;
-	ctx.globalAlpha = alpha;
+function drawText(x, y, ptr, len, color) {
 	ctx.fillStyle = getColorString(color);
 	ctx.textBaseline="middle"; 
 	ctx.textAlign="center"; 
-	//console.log(ctx.font);
     ctx.fillText(toJsString(ptr, len), x, y);
-	
-	ctx.globalAlpha = a;
+}
+
+function drawCircle(x, y, radius, color) {
+	ctx.beginPath();
+	ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+	ctx.fillStyle = getColorString(color);
+	ctx.fill();
+}
+
+function setAlpha(alpha) {
+	ctx.globalAlpha = alpha; //from 0 to 1
 }
 
 function setFont(ptr, len) {
@@ -111,11 +107,34 @@ async function loadWasm() {
 			drawText,
 			drawLine,
 			drawRect,
+			drawCircle,
+			setAlpha,
 			setFont
 	  }
 	};
-	const fetchPromise = fetch('tictac.wasm');
-	const { instance } = await WebAssembly.instantiateStreaming(fetchPromise, importObject);
+	
+	const request = new XMLHttpRequest();
+	request.open('GET', 'tictac.wasm');
+	request.responseType = 'arraybuffer';
+	
+	const fetchPromise = new Promise(resolve => {
+		var request = new XMLHttpRequest();
+		request.open('GET', 'tictac.wasm');
+		request.responseType = 'arraybuffer';
+		request.onload = function(e) {
+			resolve(request.response);
+		};
+		request.onerror = function () {
+			resolve(undefined);
+			console.error("Could not retrieve the web assembly object");
+		};
+		request.send();
+	})
+	
+	const buffer = await fetchPromise;
+	const module = await WebAssembly.compile(buffer);
+	const instance = await WebAssembly.instantiate(module, importObject);
+	
 	linearMemory = instance.exports.memory;
 	createCanvas();
 	instance.exports.initGame();
@@ -131,6 +150,7 @@ async function loadWasm() {
 
 function createCanvas() {
 	canvas = document.createElement("canvas");
+	var side = Math.min(window.innerWidth, window.innerHeight);
     canvas.width = 1024;
     canvas.height = 640;
 	
@@ -159,9 +179,7 @@ function createCanvas() {
 	<div id="maindiv" style="padding: 24px; text-align: center">
 		<p><button onmouseup="askHint()">Hint</button> <button onmouseup="askReset()">Reset</button></p>
 		<h1>Meta tic-tac-toe</h1>
-		<p>Click on cells or something</p>
-		<p>Or look at the <a href="https://www.github.com/dkorpel/tictac">source on GitHub</a></p>
-		<p><i>I'll update this later</i></p>
+		<p>For info about the game, go to the <a href="https://www.github.com/dkorpel/tictac">GitHub page</a></p>
 	</div> 
 </body>
 </html>

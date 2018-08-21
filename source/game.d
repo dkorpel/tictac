@@ -63,7 +63,7 @@ struct GameState
 	Mode mode = Mode.titleScreen;
 	byte cursorX = 4;
 	byte cursorY = 4;
-	byte cpuRecursionLevel = 7; /// How many moves the cpu looks ahead
+	byte cpuRecursionLevel = 8; /// How many moves the cpu looks ahead
 	int sinceLastMessage = 0;
 	int sinceLastMove;
 	int globalTimer = 0;
@@ -88,7 +88,8 @@ struct GameState
 	void draw() {
 		version(WebAssembly) {
 			import jsdraw: drawGameCanvas;
-			drawGameCanvas(this); // different because name conflict in exported function
+			import app: windowContext;
+			drawGameCanvas(this, windowContext); // different because name conflict in exported function
 		} else {
 			// Notably NOT nogc if commandline
 			import draw: drawGame;
@@ -193,11 +194,12 @@ void updateGame(ref GameState state, Input input) {
 			}
 			break;
 		case Mode.scramble:
-			state.field.randomizeField();
+			if (globalTimer & 1) state.field.randomizeField();
 			if (input.enter)
 			{
 				field.getValidMoves();
 				mode = Mode.makeMove;
+				state.sinceLastMove = 0;
 				state.setMessage(InfoMessage.firstMove);
 			}
 			break;
@@ -219,7 +221,7 @@ void updateGame(ref GameState state, Input input) {
 					cpuDoMove(state);
 				}
 			} else {
-				if (state.sinceLastMove >= 30) {
+				if (state.sinceLastMove >= 60) {
 					cpuDoMove(state);
 				}
 			}
@@ -291,13 +293,7 @@ void playerTryMove(ref GameState state, int x, int y) {
 	auto val = state.field.validMove[x][y];
 	if (val == Validity.allowed) {
 		state.field.doMove(x, y);
-
-		// Move cursor to the right square
-		state.cursorX = 1 + (x % 3) * 3;
-		state.cursorY = 1 + (y % 3) * 3;
-
-		state.setMessage(state.field.turn == Who.player0 ? InfoMessage.player0turn : InfoMessage.player1turn);
-		state.sinceLastMove = 0;
+		state.updateAfterMove();
 	} else {
 		final switch (val) {
 			case Validity.allowed: case Validity.disallowed:
@@ -317,6 +313,14 @@ void playerTryMove(ref GameState state, int x, int y) {
 				break;
 		}
 	}
+}
+
+void updateAfterMove(ref GameState state) {
+	// Move cursor to the right square
+	state.cursorX = 1 + (state.field.lastMoveX % 3) * 3;
+	state.cursorY = 1 + (state.field.lastMoveY % 3) * 3;
+	state.setMessage(state.field.turn == Who.player0 ? InfoMessage.player0turn : InfoMessage.player1turn);
+	state.sinceLastMove = 0;
 }
 
 /*
@@ -346,20 +350,19 @@ void doMove(ref Field field, int x, int y) {
 	field.getValidMoves();
 }
 
+// Cap amount of moves to prevent absurd waiting times for A.I.
+__gshared int totalMovesConsidered = 0;
+enum maxMovesConsidered = 3_000_000;
+
 /**
  * Ask the cpu to do a move, either as an opponent or to provide a hint to the player
  */
 void cpuDoMove(ref GameState state) {
-	int score, x, y;
-
+	int x, y;
+	totalMovesConsidered = 0;
 	bestMoveScore(state.field, state.cpuRecursionLevel, x, y);
 	state.field.doMove(x, y);
-
-	// Move cursor to the right square
-	state.cursorX = 1 + (x % 3) * 3;
-	state.cursorY = 1 + (y % 3) * 3;
-	state.setMessage(state.field.turn == Who.player0 ? InfoMessage.player0turn : InfoMessage.player1turn);
-	state.sinceLastMove = 0;
+	state.updateAfterMove();
 }
 
 /**
@@ -370,15 +373,16 @@ int bestMoveScore(ref Field field, int recursions, out int x, out int y) {
 	x = 0;
 	y = 0;
 
-	if (recursions == 0 || field.gameWon != Who.noone || field.validMoves == 0) {
+	if (recursions <= 0 || field.gameWon != Who.noone || 
+		field.validMoves == 0 || totalMovesConsidered >= maxMovesConsidered) {
 		return 0;
 	}
 
 	foreach(i; 0..9) foreach(j; 0..9) {
 		if (field.validMove[i][j] == Validity.allowed) {
+			totalMovesConsidered++;
 			Field tempField = field;
 			tempField.doMove(i, j);
-
 			version (none) debug {
 				// Visualize the 'thinking process'
 				import draw:drawField;

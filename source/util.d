@@ -3,7 +3,6 @@
 extern(C):
 @nogc:
 
-
 // Random seed variables
 struct RandomSeed {
 	ubyte x = 148;
@@ -35,18 +34,16 @@ int clamp(int val, int min, int max) {
 	return (val < min ? min : (val > max ? max : val));
 }
 
-int max(int a, int b) {
+double dclamp(double val, double min, double max) {
+	return (val < min ? min : (val > max ? max : val));
+}
+
+double dmax(double a, double b) {
 	return a > b ? a : b;
 }
 
-int min(int a, int b) {
+double dmin(double a, double b) {
 	return a < b ? a : b;
-}
-
-unittest
-{
-	assert(clamp(10, 0, 7) == 7);
-	assert(clamp(-4, -2, 5) == -2);
 }
 
 /**

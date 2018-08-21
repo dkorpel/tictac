@@ -9,16 +9,25 @@ extern(C):
 
 	__gshared GameState state;
 
+	struct WindowContext {
+		double canvasWidth = 1024;
+		double canvasHeight = 640;
+		double fieldX = (1024-500)/2;
+		double fieldY = 30;
+		double fieldEdge = 500;
+	}
+
+	__gshared WindowContext windowContext;
+
 	void initGame() {
 		state.initialize();
 	}
 
 	void stepGame(double mouseX, double mouseY, bool click, bool inputRestart, bool inputHint) {
-		import jsdraw: fieldX, fieldY, fieldEdge;
 		Input input = Input.init;
 		if (click) input.enter = true;
-		input.selectX = cast(byte) (cast(int) (mouseX - fieldX) / (fieldEdge/9));
-		input.selectY = cast(byte) (cast(int) (mouseY - fieldY) / (fieldEdge/9));
+		input.selectX = cast(byte) (cast(int) (mouseX - windowContext.fieldX) / (windowContext.fieldEdge/9));
+		input.selectY = cast(byte) (cast(int) (mouseY - windowContext.fieldY) / (windowContext.fieldEdge/9));
 		input.hint = inputHint;
 		input.restart = inputRestart;
 		state.update(input);
@@ -26,6 +35,17 @@ extern(C):
 
 	void drawGame() {
 		state.draw();
+	}
+
+	void resize(double width, double height) {
+		with (windowContext) {
+			canvasWidth = width;
+			canvasHeight = height;
+			import util: dmin;
+			fieldEdge = dmin(canvasWidth, canvasHeight*0.9)*0.8;
+			fieldX = (canvasWidth-fieldEdge)/2;
+			fieldY = canvasHeight * 0.05;
+		}
 	}
 
 	// These simple C standard library implementations are needed because
@@ -65,7 +85,7 @@ extern(C):
 
 } else {
 	import scone: window;
-	enum ticksPerSecond = 30;
+	enum ticksPerSecond = 60;
 
 	void main()
 	{
