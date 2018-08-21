@@ -8,10 +8,19 @@ The port has these main goals:
 - Test the WebAssembly capabilities of D
 - Put it in a high level language so it's easier to extend
 
-## Compiling
-After cloning, the command line version can be compiled with a simple `dub run` in the root folder. 
+**Play online:** [Github pages site](https://dkorpel.github.io/tictac/)
 
-A 64-bit release build can best be done like so: **FIXME: Scone doesn't work on 64-bit yet**
+**Play in terminal:** [Releases](https://github.com/dkorpel/tictac/releases) or `git clone dub run`
+
+Or compile it:
+```
+git clone https://github.com/dkorpel/tictac
+cd tictac
+dub run -release
+```
+
+## Compiling
+A 64-bit release build can best be done like so:
 ```
 dub run --compiler=ldc2 --arch=x86_64 --build=release
 ```
