@@ -150,7 +150,7 @@ void drawField(in ref Field field, int x, int y) {
  * Draw the currently selected cell if there is supposed to be one
  */
 void drawCursor(in ref GameState state, int x, int y) {
-	if (state.mode == state.Mode.makeMove) {
+	if (state.mode == state.Mode.makeMove && state.cursorInRange) {
 		int xx = x + state.cursorX.toCellX;
 		int yy = y + state.cursorY.toCellY;
 

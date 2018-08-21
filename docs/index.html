@@ -85,6 +85,10 @@ function drawText(x, y, ptr, len, color) {
     ctx.fillText(toJsString(ptr, len), x, y);
 }
 
+function _log(ptr, len) {
+	console.log(toJsString(ptr, len));
+}
+
 function drawCircle(x, y, radius, color) {
 	ctx.beginPath();
 	ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
@@ -138,6 +142,7 @@ async function loadWasm() {
 	linearMemory = instance.exports.memory;
 	createCanvas();
 	instance.exports.initGame();
+	instance.exports.resize(canvas.width, canvas.height);
 	setInterval(() => { 
 		instance.exports.stepGame(mouseX, mouseY, mouseClick, inputReset, inputHint); 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -150,9 +155,9 @@ async function loadWasm() {
 
 function createCanvas() {
 	canvas = document.createElement("canvas");
-	var side = Math.min(window.innerWidth, window.innerHeight);
-    canvas.width = 1024;
-    canvas.height = 640;
+	var side = 1000; //Math.min(window.innerWidth, window.innerHeight*0.8);
+    canvas.width = side;
+    canvas.height = side*0.6;
 	
 	function getMousePos(canvas, evt) {
 		var rect = canvas.getBoundingClientRect();

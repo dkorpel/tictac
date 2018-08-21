@@ -13,6 +13,15 @@ enum Who: byte
 	player1,
 }
 
+/// Currently hard-coded, but possible to have 2-player modes
+bool isCpu(Who who, in ref GameState) {
+	final switch(who) {
+		case Who.noone: return false;
+		case Who.player0: return false;
+		case Who.player1: return true;
+	}
+}
+
 /**
  * Whether a move is allowed and if not, which rule prevents it from being allowed
  */
@@ -63,6 +72,7 @@ struct GameState
 	Mode mode = Mode.titleScreen;
 	byte cursorX = 4;
 	byte cursorY = 4;
+	bool cursorInRange = true;
 	byte cpuRecursionLevel = 8; /// How many moves the cpu looks ahead
 	int sinceLastMessage = 0;
 	int sinceLastMove;
@@ -109,6 +119,7 @@ struct Input
 	bool restart = false;
 	bool exit = false;
 	bool hint = false;
+	bool selectInRange = true;
 	byte selectX = -1;
 	byte selectY = -1;
 }
@@ -205,8 +216,9 @@ void updateGame(ref GameState state, Input input) {
 			break;
 		case Mode.makeMove:
 
-			if (field.turn == Who.player0) {
+			if (!field.turn.isCpu(state)) {
 				import util: clamp;
+				cursorInRange = input.selectInRange;
 				cursorX = cast(byte) clamp(cursorX + input.deltaX, 0, 8);
 				cursorY = cast(byte) clamp(cursorY + input.deltaY, 0, 8);
 
@@ -215,13 +227,13 @@ void updateGame(ref GameState state, Input input) {
 					cursorY = input.selectY;
 				}
 
-				if (input.enter) {
+				if (input.enter && cursorInRange) {
 					playerTryMove(state, cursorX, cursorY);
 				} else if (input.hint) {
 					cpuDoMove(state);
 				}
 			} else {
-				if (state.sinceLastMove >= 60) {
+				if (state.sinceLastMove >= 90 || input.enter) {
 					cpuDoMove(state);
 				}
 			}
@@ -317,8 +329,12 @@ void playerTryMove(ref GameState state, int x, int y) {
 
 void updateAfterMove(ref GameState state) {
 	// Move cursor to the right square
-	state.cursorX = 1 + (state.field.lastMoveX % 3) * 3;
-	state.cursorY = 1 + (state.field.lastMoveY % 3) * 3;
+	version (WebAssembly) {
+
+	} else {
+		state.cursorX = 1 + (state.field.lastMoveX % 3) * 3;
+		state.cursorY = 1 + (state.field.lastMoveY % 3) * 3;
+	}
 	state.setMessage(state.field.turn == Who.player0 ? InfoMessage.player0turn : InfoMessage.player1turn);
 	state.sinceLastMove = 0;
 }

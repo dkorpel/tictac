@@ -7,7 +7,7 @@ version (WebAssembly) {
 }
 
 import app: WindowContext;
-import game: GameState, Field, Who, Validity;
+import game: GameState, Field, Who, Validity, isCpu;
 extern(C):
 
 void drawGameCanvas(in ref GameState state, in ref WindowContext context) {
@@ -17,7 +17,7 @@ void drawGameCanvas(in ref GameState state, in ref WindowContext context) {
 		with (state.Mode) final switch(state.mode) {
 			case makeMove: case scramble: case gameOver:
 				drawMessage(state, context);
-				drawField(state.field, context, dclamp(state.sinceLastMove/60.0, 0, 1));
+				drawField(state.field, context, dclamp(state.sinceLastMove/90.0, 0, 1));
 				drawCursor(state, context);
 				break;
 			case titleScreen:
@@ -53,13 +53,15 @@ enum Color cBlack = 0x000000;
 enum Color cGray = 0x888888;
 enum Color cWhite = 0xFFFFFF;
 
-enum Color p0color = 0xFF2222;
-enum Color p1color = 0x2288FF;
+enum Color p0color = 0x2288FF;
+enum Color p1color = 0xFF2222;
 enum Color bckColor = 0x112211;
 enum Color fgColor = 0xEEEEFF;
+enum Color allowedCellColor = 0xAACCAA;
+
 enum Color cursorColor = 0x22DD11;
 enum Color cursorColorInvalid = 0xEE3322;
-enum Color previousMoveColor = 0xAA8844;
+enum Color previousMoveColor = 0xFFEE44;
 
 void drawMessage(in ref GameState state, WindowContext context) {
 	import util: clamp;
@@ -76,7 +78,7 @@ void drawCursor(in ref GameState state, in ref WindowContext context) {
 	auto y = context.fieldY;
 	auto validity = state.field.validMove[state.cursorX][state.cursorY];
 
-	if (state.mode != GameState.Mode.makeMove) return;
+	if (state.mode != GameState.Mode.makeMove || !state.cursorInRange || state.field.turn.isCpu(state)) return;
 	setAlpha(0.4);
 	drawRect(
 		x + state.cursorX*(edge/9.0), 
@@ -156,7 +158,7 @@ void drawField(in ref Field field, in ref WindowContext context, double anim = 1
 			drawRect(
 				x + i*cellEdge, y + j *cellEdge, 
 				cellEdge, cellEdge,
-				fgColor);
+				allowedCellColor);
 
 			setAlpha(1);
 		}
@@ -173,7 +175,7 @@ void drawField(in ref Field field, in ref WindowContext context, double anim = 1
 		drawCircle(
 			x + field.lastMoveX.getCellCenter(edge), 
 			y + field.lastMoveY.getCellCenter(edge), 
-			cellEdge/2 + sizeAnim*cellEdge,
+			cellEdge*0.45 + sizeAnim*cellEdge*2.5,
 			previousMoveColor
 			);
 

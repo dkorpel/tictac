@@ -28,6 +28,9 @@ extern(C):
 		if (click) input.enter = true;
 		input.selectX = cast(byte) (cast(int) (mouseX - windowContext.fieldX) / (windowContext.fieldEdge/9));
 		input.selectY = cast(byte) (cast(int) (mouseY - windowContext.fieldY) / (windowContext.fieldEdge/9));
+		if (mouseX < windowContext.fieldX || mouseY < windowContext.fieldY || input.selectX >= 9 || input.selectY >= 9) {
+			input.selectInRange = false;
+		}
 		input.hint = inputHint;
 		input.restart = inputRestart;
 		state.update(input);
@@ -42,10 +45,16 @@ extern(C):
 			canvasWidth = width;
 			canvasHeight = height;
 			import util: dmin;
-			fieldEdge = dmin(canvasWidth, canvasHeight*0.9)*0.8;
+			fieldEdge = dmin(canvasWidth, canvasHeight*0.9)*0.9;
 			fieldX = (canvasWidth-fieldEdge)/2;
 			fieldY = canvasHeight * 0.05;
 		}
+	}
+
+	void _log(immutable(char)* ptr, size_t len);
+
+	void consoleLog(string str) {
+
 	}
 
 	// These simple C standard library implementations are needed because
