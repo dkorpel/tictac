@@ -83,9 +83,6 @@ struct GameState
 	/// Reset the game state
 	void initialize() @nogc {
 		this = GameState.init;
-		version (WebAssembly) {
-			this.cpuRecursionLevel = 7; // Set it lower?
-		}
 	}
 
 	/// Update the game state

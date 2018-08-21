@@ -1,16 +1,16 @@
 # Meta-tic-tac-toe
 **Play online:** [Github pages site](https://dkorpel.github.io/tictac/)
 
-**Play in terminal:** [Executable Releases](https://github.com/dkorpel/tictac/releases)
+**Play in your terminal:** [Executable Releases](https://github.com/dkorpel/tictac/releases)
 
-Or **compile it**:
+Or **compile it yourself**:
 ```
 git clone https://github.com/dkorpel/tictac
 cd tictac
 dub run
 ```
 
---
+---
 
 This is a port of a meta tic-tac-toe game written originally in pure x86_64 assembly in October 2015, now written in the D Programming Language. 
 

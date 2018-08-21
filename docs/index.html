@@ -60,6 +60,14 @@ function toJsString(ptr, len) {
 	}
 }
 
+function _log(ptr, len) {
+	console.log(toJsString(ptr, len));
+}
+
+function getTimeMillis() {
+	return new Date().getTime();
+}
+
 function getColorString(color) {
 	return "#"+color.toString(16);
 }
@@ -83,10 +91,6 @@ function drawText(x, y, ptr, len, color) {
 	ctx.textBaseline="middle"; 
 	ctx.textAlign="center"; 
     ctx.fillText(toJsString(ptr, len), x, y);
-}
-
-function _log(ptr, len) {
-	console.log(toJsString(ptr, len));
 }
 
 function drawCircle(x, y, radius, color) {
@@ -113,7 +117,8 @@ async function loadWasm() {
 			drawRect,
 			drawCircle,
 			setAlpha,
-			setFont
+			setFont,
+			getTimeMillis
 	  }
 	};
 	
