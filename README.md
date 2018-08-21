@@ -12,15 +12,16 @@ The port has these main goals:
 
 **Play in terminal:** [Releases](https://github.com/dkorpel/tictac/releases) or `git clone dub run`
 
-Or compile it:
+Or **compile it**:
 ```
 git clone https://github.com/dkorpel/tictac
 cd tictac
-dub run -release
+dub run
 ```
 
 ## Compiling
-A 64-bit release build can best be done like so:
+
+While a simple `dub run` works, a 64-bit release build can best be done like so:
 ```
 dub run --compiler=ldc2 --arch=x86_64 --build=release
 ```
@@ -32,13 +33,7 @@ There's no WebAssembly target for dub currently, so for wasm, use the included b
 ```
 rdmd build wasm
 ```
-
-It will run this monster of a compiler invocation:
-```
-ldc2 -mtriple=wasm32-unknown-unknown-wasm -betterC -link-internally -L-allow-undefined -O3 -release -Isource source/app.d source/jsdraw.d source/game.d source/util.d -of="build/wasm"
-```
-
-The resulting executable / web page will be in the `build/cmd` or `build/wasm` folder.
+The resulting .wasm will be put in the `doc` folder where the webpage also resides.
 
 ## About the Game
 The idea of meta tic-tac-toe is explained here: [Ultimate-tic-tac-toe](https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe) 
