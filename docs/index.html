@@ -60,8 +60,8 @@ function toJsString(ptr, len) {
 	}
 }
 
-function _log(ptr, len) {
-	console.log(toJsString(ptr, len));
+function reportBenchmark(number, time) {
+	console.log("Evaluated "+number+" moves in "+time+" ms");
 }
 
 function getTimeMillis() {
@@ -118,7 +118,8 @@ async function loadWasm() {
 			drawCircle,
 			setAlpha,
 			setFont,
-			getTimeMillis
+			getTimeMillis,
+			reportBenchmark
 	  }
 	};
 	

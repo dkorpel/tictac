@@ -202,7 +202,7 @@ void updateGame(ref GameState state, Input input) {
 			}
 			break;
 		case Mode.scramble:
-			if (globalTimer & 1) state.field.randomizeField();
+			if ((globalTimer % 4) == 0) state.field.randomizeField();
 			if (input.enter)
 			{
 				field.getValidMoves();
@@ -358,9 +358,11 @@ void doMove(ref Field field, int x, int y) {
 	Who winner = field.checkGameWin();
 	if (winner != Who.noone) {
 		field.gameWon = winner;
+		field.validMoves = 0;
+	} else {
+		field.getValidMoves();
 	}
 
-	field.getValidMoves();
 }
 
 // Cap amount of moves to prevent absurd waiting times for A.I.
@@ -373,7 +375,13 @@ enum maxMovesConsidered = 3_000_000;
 void cpuDoMove(ref GameState state) {
 	int x, y;
 	totalMovesConsidered = 0;
+
+	import app: benchmarkStart, benchmarkEnd;
+
+	benchmarkStart();
 	bestMoveScore(state.field, state.cpuRecursionLevel, x, y);
+	benchmarkEnd(totalMovesConsidered);
+	
 	state.field.doMove(x, y);
 	state.updateAfterMove();
 }

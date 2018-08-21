@@ -51,10 +51,16 @@ extern(C):
 		}
 	}
 
-	void _log(immutable(char)* ptr, size_t len);
+	int getTimeMillis() @nogc;
+	void reportBenchmark(int number, int msecs) @nogc;
+	__gshared int benchmarkStartTime = 0;
 
-	void consoleLog(string str) {
-
+	void benchmarkStart() @nogc {
+		benchmarkStartTime = getTimeMillis();
+	}
+	
+	void benchmarkEnd(int number) @nogc {
+		reportBenchmark(number, getTimeMillis()-benchmarkStartTime);
 	}
 
 	// These simple C standard library implementations are needed because
@@ -143,5 +149,24 @@ extern(C):
 		}
 		
 		return result;
+	}
+
+	// Benchmark stuff
+	enum bool benchmarkShown = false;
+	long benchmarkMsecs = 0;
+	long benchmarkMoves = 0;
+	
+	import std.datetime.stopwatch: StopWatch, AutoStart;
+	private StopWatch stopWatch = StopWatch(AutoStart.no);
+	
+	void benchmarkStart() @nogc {
+		stopWatch.reset();
+		stopWatch.start();
+	}
+	
+	void benchmarkEnd(int movesAmount) @nogc {
+		stopWatch.stop();
+		benchmarkMsecs = stopWatch.peek.total!"msecs";
+		benchmarkMoves = movesAmount;
 	}
 }

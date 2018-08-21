@@ -138,7 +138,7 @@ void drawField(in ref Field field, in ref WindowContext context, double anim = 1
 		drawLine(x, y+offset, x+edge, y+offset, innerThickness, fgColor);
 	}
 
-	// Content and valid moves
+	// Content
 	drawSetFont("30px Arial");
 	foreach(i; 0..9) foreach(j; 0..9) {
 		auto str = field.fieldContent[i][j].toSymbol;
@@ -148,18 +148,21 @@ void drawField(in ref Field field, in ref WindowContext context, double anim = 1
 			str.ptr, str.length,
 			fgColor,
 			);
+	}
 
+	// Valid moves
+	if (field.gameWon == Who.noone) foreach(i; 0..9) foreach(j; 0..9) {
 		if (field.validMove[i][j] == Validity.allowed) {
 			// "Blink animation", going quickly to alpha 0.75 and slowly back to 0.25
 			if (anim > 0.5) setAlpha(1.25-anim);
 			else if (anim > 0.25) setAlpha((anim-0.25)*3);
 			else setAlpha(0);
-
+			
 			drawRect(
 				x + i*cellEdge, y + j *cellEdge, 
 				cellEdge, cellEdge,
 				allowedCellColor);
-
+			
 			setAlpha(1);
 		}
 	}

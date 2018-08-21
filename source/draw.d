@@ -169,7 +169,11 @@ void drawMessage(in ref GameState state) {
 	auto str = messageStrings[state.message];
 	int i = clamp(state.sinceLastMessage * 4, 0, cast(int) str.length);
 
-	window.write(1, 23, bgField, fgField, str[0..i]); //, str[0..$]
+	window.write(1, 23, bgField, fgField, str[0..i]);
+
+	import app: benchmarkMoves, benchmarkMsecs, benchmarkShown;
+	if (benchmarkShown)
+		window.write(1, 24, bgField, fgField, "Evaluated ", benchmarkMoves, " moves in ", benchmarkMsecs, "ms");
 }
 
 void drawTitleScreen(in ref GameState) {
