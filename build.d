@@ -23,7 +23,7 @@ int main(string[] args) {
 			default: break;
 		}
 	}
-	writeln("Usage: rdmd build [option]")
+	writeln("Usage: rdmd build [option]");
 	writeln("Options are:");
 	writeln("  cmd32   command line executible (32-bit)");
 	writeln("  cmd64   command line executible (64-bit)");

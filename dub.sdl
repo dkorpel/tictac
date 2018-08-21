@@ -1,4 +1,5 @@
-name "Meta tic-tac-toe"
+name "tictac"
+targetName "Meta tic-tac-toe"
 description "A meta tic-tac-toe game written in D with both a Command Line Window and Javascript + WebAssembly backend"
 authors "dkorpel"
 copyright "Copyright © 2018, dkorpel"
