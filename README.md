@@ -1,4 +1,7 @@
 # Meta-tic-tac-toe
+
+![image](https://user-images.githubusercontent.com/14114684/44422238-eae4e100-a582-11e8-94d0-acc3f534b907.png)
+
 **Play online:** [Github pages site](https://dkorpel.github.io/tictac/)
 
 **Play in your terminal:** [Executable Releases](https://github.com/dkorpel/tictac/releases)
@@ -30,7 +33,7 @@ dub run --compiler=ldc2 --arch=x86_64 --build=release
 ```
 
 This results in a smaller executable and shorter waiting times for the A.I.
-It requires the [LDC](https://github.com/ldc-developers/ldc/) compiler to be installed, and on Windows it requires the Microsoft Linker which can be installed from [Visual Studio](https://visualstudio.microsoft.com/) with the 'toolchain Visual C++' component.
+It requires the [LDC](https://github.com/ldc-developers/ldc/) compiler to be installed, and on Windows it requires the Microsoft Linker which can be installed by installing [Visual Studio](https://visualstudio.microsoft.com/) with and adding the 'toolchain Visual C++' component.
 
 There's no WebAssembly target for dub currently, so for wasm, use the included build script:
 ```
