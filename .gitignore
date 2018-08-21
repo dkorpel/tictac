@@ -1,0 +1,17 @@
+.dub
+docs.json
+dub.userprefs
+__dummy.html
+docs/
+build/
+tictac.so
+tictac.dylib
+tictac.dll
+tictac.a
+tictac.lib
+tictac-test-*
+*.exe
+*.o
+*.obj
+*.lst
+*.wasm

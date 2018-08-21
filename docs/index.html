@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Meta tic-tac-toe</title>
+<meta name="viewport" charset="utf-8" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border: 2px solid #113344;
+    background-color: #121212;
+	display: inline;
+}
+body {
+	background-image: linear-gradient(#203040, #101010);
+	height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+h1 {
+	color: #EEDDEE;
+	text-shadow: 2px 2px black;
+	font-family: "Segoe UI", "Verdana", "Arial";
+	font-style: normal;
+	font-size: 32px;
+}
+p {
+	color: #EEDDEE;
+	font-family: "Segoe UI", "Verdana", "Arial";
+	font-style: normal;
+	font-size: 18px;
+	line-height: 1.1;
+}
+
+</style>
+</head>
+<body onload="loadWasm()">
+<script>
+const fps = 60;
+var linearMemory;
+var mouseX;
+var mouseY;
+var mouseClick = false;
+var inputHint = false;
+var inputReset = false;
+
+// Callbacks for buttons
+function askReset() {inputReset = true;}
+function askHint() {inputHint = true;}
+
+function toJsString(ptr, len) {
+	try {
+		var buffer = new Uint8Array(linearMemory.buffer, ptr, len);
+		var msg = '';
+		for (var i=0; i < buffer.length; i++) {
+			msg += String.fromCharCode(buffer[i]);
+		}
+		return msg;
+	} catch(err) {
+		return "eh?";
+	}
+}
+
+function getColorString(color) {
+	return "#"+color.toString(16);
+}
+
+function drawRect(x0, y0, x1, y1, color, alpha) {
+	var a = ctx.globalAlpha;
+	ctx.globalAlpha = alpha;
+	ctx.fillStyle = getColorString(color);
+	
+	ctx.fillRect(x0, y0, x1, y1);
+	
+	ctx.globalAlpha = a;
+}
+
+function drawLine(x0, y0, x1, y1, thickness, color, alpha) {
+	var a = ctx.globalAlpha;
+	ctx.globalAlpha = alpha;
+	ctx.strokeStyle = getColorString(color);
+	
+	ctx.lineWidth=thickness;
+	ctx.beginPath();
+	ctx.moveTo(x0, y0);
+	ctx.lineTo(x1, y1);
+	ctx.stroke();
+	
+	ctx.globalAlpha = a;
+}
+
+function drawText(x, y, ptr, len, color, alpha) {
+	var a = ctx.globalAlpha;
+	ctx.globalAlpha = alpha;
+	ctx.fillStyle = getColorString(color);
+	ctx.textBaseline="middle"; 
+	ctx.textAlign="center"; 
+	//console.log(ctx.font);
+    ctx.fillText(toJsString(ptr, len), x, y);
+	
+	ctx.globalAlpha = a;
+}
+
+function setFont(ptr, len) {
+	ctx.font = toJsString(ptr, len);
+}
+
+async function loadWasm() {
+
+	const importObject = {
+		env: {
+			drawText,
+			drawLine,
+			drawRect,
+			setFont
+	  }
+	};
+	const fetchPromise = fetch('tictac.wasm');
+	const { instance } = await WebAssembly.instantiateStreaming(fetchPromise, importObject);
+	linearMemory = instance.exports.memory;
+	createCanvas();
+	instance.exports.initGame();
+	setInterval(() => { 
+		instance.exports.stepGame(mouseX, mouseY, mouseClick, inputReset, inputHint); 
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		instance.exports.drawGame();
+		mouseClick = false;
+		inputHint = false;
+		inputReset = false;
+	}, 1000/fps); //ms
+		
+	/*
+	const request = new XMLHttpRequest();
+	request.open('GET', 'tictac.wasm');
+	request.responseType = 'arraybuffer';
+	request.onload = () => {
+	  const wasmCode = request.response;
+	  const importObject = {
+		  env: {
+			drawText,
+			drawLine,
+			drawRect,
+			setFont
+		  }
+		};
+		var wasmModule = new WebAssembly.Module(wasmCode);
+		var wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
+		linearMemory = wasmInstance.exports.memory;
+		createCanvas();
+		wasmInstance.exports.initGame();
+		setInterval(() => { 
+			wasmInstance.exports.stepGame(mouseX, mouseY, mouseClick, inputReset, inputHint); 
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			wasmInstance.exports.drawGame();
+			mouseClick = false;
+			inputHint = false;
+			inputReset = false;
+		}, 1000/fps); //ms
+	};
+	request.send();
+	*/
+}
+
+function createCanvas() {
+	canvas = document.createElement("canvas");
+    canvas.width = 1024;
+    canvas.height = 640;
+	
+	function getMousePos(canvas, evt) {
+		var rect = canvas.getBoundingClientRect();
+		return {
+			x: evt.clientX - rect.left,
+			y: evt.clientY - rect.top
+		};
+	}
+	
+	// Deal with input
+	canvas.addEventListener('mousemove', (evt) => {
+		var mousePos = getMousePos(canvas, evt);
+		mouseX = mousePos.x;
+		mouseY = mousePos.y;
+	}, false);
+	
+	canvas.addEventListener('click', () => { mouseClick = true; }, false);
+
+    ctx = this.canvas.getContext("2d");
+    document.getElementById("maindiv").prepend(canvas);
+}
+
+</script>
+	<div id="maindiv" style="padding: 24px; text-align: center">
+		<p><button onmouseup="askHint()">Hint</button><button onmouseup="askReset()">Reset</button></p>
+		<h1>Meta tic-tac-toe</h1>
+		<p>Click on cells or something</p>
+		<p>Or look at the <a href="https://www.github.com/dkorpel/tictac">source on GitHub</a></p>
+		<p><i>I'll update this later</i></p>
+	</div> 
+</body>
+</html>

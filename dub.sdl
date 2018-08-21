@@ -1,0 +1,9 @@
+name "Meta tic-tac-toe"
+description "A meta tic-tac-toe game written in D with both a Command Line Window and Javascript + WebAssembly backend"
+authors "dkorpel"
+copyright "Copyright © 2018, dkorpel"
+license "BSD 2-clause"
+dependency "scone" version="~>2.0.0-pre.2"
+targetPath "build/cmd"
+targetType "executable"
+excludedSourceFiles "source/jsdraw.d" // This file is only for WebAssembly which isn't built with dub
