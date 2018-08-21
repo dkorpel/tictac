@@ -127,37 +127,6 @@ async function loadWasm() {
 		inputHint = false;
 		inputReset = false;
 	}, 1000/fps); //ms
-		
-	/*
-	const request = new XMLHttpRequest();
-	request.open('GET', 'tictac.wasm');
-	request.responseType = 'arraybuffer';
-	request.onload = () => {
-	  const wasmCode = request.response;
-	  const importObject = {
-		  env: {
-			drawText,
-			drawLine,
-			drawRect,
-			setFont
-		  }
-		};
-		var wasmModule = new WebAssembly.Module(wasmCode);
-		var wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
-		linearMemory = wasmInstance.exports.memory;
-		createCanvas();
-		wasmInstance.exports.initGame();
-		setInterval(() => { 
-			wasmInstance.exports.stepGame(mouseX, mouseY, mouseClick, inputReset, inputHint); 
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			wasmInstance.exports.drawGame();
-			mouseClick = false;
-			inputHint = false;
-			inputReset = false;
-		}, 1000/fps); //ms
-	};
-	request.send();
-	*/
 }
 
 function createCanvas() {
