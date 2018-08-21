@@ -11,7 +11,7 @@ The port has these main goals:
 ## Compiling
 After cloning, the command line version can be compiled with a simple `dub run` in the root folder. 
 
-A 64-bit release build can best be done like so: **FIXME: Scone doesn't work on 64-bit yet**
+A 64-bit release build can best be done like so:
 ```
 dub run --compiler=ldc2 --arch=x86_64 --build=release
 ```
