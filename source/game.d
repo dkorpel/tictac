@@ -199,10 +199,11 @@ void updateGame(ref GameState state, Input input) {
 			{
 				mode = Mode.scramble;
 				state.setMessage(InfoMessage.startGameInstruction);
+				state.field.randomizeField();
 			}
 			break;
 		case Mode.scramble:
-			if ((globalTimer % 4) == 0) state.field.randomizeField();
+			//if ((globalTimer % 4) == 0) state.field.randomizeField();
 			if (input.enter)
 			{
 				field.getValidMoves();

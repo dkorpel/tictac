@@ -152,7 +152,7 @@ extern(C):
 	}
 
 	// Benchmark stuff
-	enum bool benchmarkShown = false;
+	enum bool benchmarkShown = true;
 	long benchmarkMsecs = 0;
 	long benchmarkMoves = 0;
 	
