@@ -61,9 +61,24 @@ It certainly does not have the best design or implementation, but it has these q
 - It is not so smart that it's impossible for the player to win
 - It is a nice benchmark for comparing WebAssembly and native assembly
 
-To elaborate on the last part: There are give or take 6 possible moves every turn, so looking n moves ahead means considering 6^n moves, so the time for the A.I. to take a move grows exponentially with the amount of moves it looks ahead. The assembly version would look about 5 moves ahead in a few seconds, and the compiled version can look about 8 moves ahead in the same time. WebAssembly performance: to be determined.
+To elaborate on the last part: There are give or take 6 possible moves every turn, so looking n moves ahead means considering 6^n moves, so the time for the A.I. to take a move grows exponentially with the amount of moves it looks ahead. The assembly version would look about 5 moves ahead in a few seconds, and the compiled version can look about 8 moves ahead in the same time.
 
-## About WebAssembly and D:
+## Performance
+
+The only performance critical part of this game is the A.I., so we can use this to see how fast different versions run. 
+I did a quick test comparing the command line version compiled with DMD and LDC using dub's debug and release configurations, and the WebAssembly version (which is compiled with LDC with -O3). The A.I. is asked to look 8 moves deep, and in total 1975681 moves were evaluated. Results:
+
+| Version       | Time    | Factor |
+|---------------|---------|--------|
+| Ldc (release) |  357 ms | 1.0    |
+| Dmd (release) |  671 ms | 1.9    |
+| Wasm          |  967 ms | 2.7    |
+| Dmd (debug)   | 1651 ms | 4.6    |
+| Ldc (debug)   | 2159 ms | 6.0    |
+
+This is by no means a thorough performance analysis, but it gives some idea of what kind of performance to expect from WebAssembly.
+
+## About WebAssembly and D
 
 This was made when WebAssembly was newly added to the ldc compiler.
 The [Wasm dither example](https://github.com/allen-garvey/wasm-dither-example) identified a bunch of issues already, so development of this game went very well. One new issue that arose is this:
