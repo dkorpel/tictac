@@ -66,17 +66,18 @@ To elaborate on the last part: There are give or take 6 possible moves every tur
 ## Performance
 
 The only performance critical part of this game is the A.I., so we can use this to see how fast different versions run. 
-I did a quick test comparing the command line version compiled with DMD and LDC using dub's debug and release configurations, and the WebAssembly version (which is compiled with LDC with -O3). The A.I. is asked to look 8 moves deep, and in total 1975681 moves were evaluated. Results:
+I did a quick test comparing the command line version compiled with DMD and LDC using dub's debug and release configurations, and the WebAssembly version (which is compiled with LDC with -O0 and -O3). The A.I. is asked to look 8 moves deep, and in total 1975681 moves were evaluated. Results:
 
 | Version       | Time    | Factor |
 |---------------|---------|--------|
 | Ldc (release) |  357 ms | 1.0    |
 | Dmd (release) |  671 ms | 1.9    |
-| Wasm          |  967 ms | 2.7    |
+| Wasm (-O3)    |  967 ms | 2.7    |
 | Dmd (debug)   | 1651 ms | 4.6    |
 | Ldc (debug)   | 2159 ms | 6.0    |
+| Wasm (-O0)    | 2807 ms | 7.9    |
 
-This is by no means a thorough performance analysis, but it gives some idea of what kind of performance to expect from WebAssembly.
+This is by no means a thorough performance analysis, but it gives some idea of what kind of performance to expect from WebAssembly. It would be could to also compare it with a JavaScript implementation, but that would involve writing more JavaScript...
 
 ## About WebAssembly and D
 
