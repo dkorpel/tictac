@@ -77,7 +77,7 @@ I did a quick test comparing the command line version compiled with DMD and LDC 
 | Ldc (debug)   | 2159 ms | 6.0    |
 | Wasm (-O0)    | 2807 ms | 7.9    |
 
-This is by no means a thorough performance analysis, but it gives some idea of what kind of performance to expect from WebAssembly. It would be could to also compare it with a JavaScript implementation, but that would involve writing more JavaScript...
+This is by no means a thorough performance analysis, but it gives some idea of what kind of performance to expect from WebAssembly. It would be interesting to also compare it with a JavaScript implementation, but that would involve rewriting it for JavaScript...
 
 ## About WebAssembly and D
 
