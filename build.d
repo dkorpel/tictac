@@ -41,6 +41,7 @@ int buildCmd(string arch = "x86_64") {
 	auto result = execute(["dub", "build", "--compiler=ldc2", "--arch="~arch, "--build=release"]);
 	if (!result[0]) {
 		writeln("Build succesful");
+		writeln(result[1]);
 		writeln("Look in the folder '", path, "'");
 	} else {
 		writeln("Build failed:");
