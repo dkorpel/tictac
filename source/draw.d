@@ -1,11 +1,11 @@
 ﻿module draw;
- 
+
 version (WebAssembly) {
 	static assert(0, "This draw module is only for a command line environment, use jsdraw for web assembly");
 }
 
 extern(C):
-import scone: window, Color, fg, bg;
+import scone: window, Color, foreground, background;
 import game: GameState, Field, Who, Validity;
 
 
@@ -13,20 +13,20 @@ import game: GameState, Field, Who, Validity;
 enum player0Color = Color.blue;
 enum player1Color = Color.red;
 
-enum bgField = Color.black_dark.bg;
-enum fgField = Color.white_dark.fg;
+enum bgField = Color.blackDark.background;
+enum fgField = Color.whiteDark.foreground;
 
-enum bgSelected = Color.cyan_dark.bg;
-enum fgSelected = Color.black_dark.fg;
+enum bgSelected = Color.cyanDark.background;
+enum fgSelected = Color.blackDark.foreground;
 
-enum fgPrevious = Color.white.fg;
-enum bgPrevious = Color.black.bg;
+enum fgPrevious = Color.white.foreground;
+enum bgPrevious = Color.black.background;
 
 import util: boxChar;
 import std.range: array;
 import std.algorithm: map;
 
-enum fieldString = 
+enum fieldString =
 "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗
 ║   │   │   ║   │   │   ║   │   │   ║
 ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢
@@ -77,7 +77,7 @@ pure @nogc @safe {
 
 	Color toColor(Who who) {
 		final switch (who) {
-			case Who.noone: return Color.black_dark;
+			case Who.noone: return Color.blackDark;
 			case Who.player0: return player0Color;
 			case Who.player1: return player1Color;
 		}
@@ -127,9 +127,9 @@ void drawField(in ref Field field, int x, int y) {
 				foreach(xx; 0..11) {
 					foreach(yy; 0..5) {
 						window.write(
-							x + i.toSuperCellX + xx, 
-							y + j.toSuperCellY + yy, 
-							player.toColor.bg, Color.white.fg);
+							x + i.toSuperCellX + xx,
+							y + j.toSuperCellY + yy,
+							player.toColor.background, Color.white.foreground);
 					}
 				}
 			}
@@ -183,26 +183,26 @@ void drawTitleScreen(in ref GameState) {
 
 // The presence of \ and ` makes it hard to turn into a nice string literal :(
 enum titleText = "
-             ___ ___                         
-       |\\/| |__   |   /\\                     
-       |  | |___  |  /~~\\                    
-                                             
-___    __     ___       __     ___  __   ___ 
- |  | /  ` __  |   /\\  /  ` __  |  /  \\ |__  
- |  | \\__,     |  /~~\\ \\__,     |  \\__/ |___ 
+             ___ ___
+       |\\/| |__   |   /\\
+       |  | |___  |  /~~\\
+
+___    __     ___       __     ___  __   ___
+ |  | /  ` __  |   /\\  /  ` __  |  /  \\ |__
+ |  | \\__,     |  /~~\\ \\__,     |  \\__/ |___
 ";
 
 enum titleText1 = `
-  ___  ___ _____ _____ ___                                    
-  |  \/  ||  ___|_   _/ _ \                                   
-  | .  . || |__   | |/ /_\ \                                  
-  | |\/| ||  __|  | ||  _  |                                  
-  | |  | || |___  | || | | |                                  
-  \_|  |_/\____/  \_/\_| |_/                                  
+  ___  ___ _____ _____ ___
+  |  \/  ||  ___|_   _/ _ \
+  | .  . || |__   | |/ /_\ \
+  | |\/| ||  __|  | ||  _  |
+  | |  | || |___  | || | | |
+  \_|  |_/\____/  \_/\_| |_/
 
- _____ _____ _____     _____ ___  _____     _____ _____ _____ 
+ _____ _____ _____     _____ ___  _____     _____ _____ _____
 |_   _|_   _/  __ \   |_   _/ _ \/  __ \   |_   _|  _  |  ___|
-  | |   | | | /  \/_____| |/ /_\ \ /  \/_____| | | | | | |__  
-  | |   | | | |  |______| ||  _  | |  |______| | | | | |  __| 
-  | |  _| |_| \__/\     | || | | | \__/\     | | \ \_/ / |___ 
+  | |   | | | /  \/_____| |/ /_\ \ /  \/_____| | | | | | |__
+  | |   | | | |  |______| ||  _  | |  |______| | | | | |  __|
+  | |  _| |_| \__/\     | || | | | \__/\     | | \ \_/ / |___
   \_/  \___/ \____/     \_/\_| |_/\____/     \_/  \___/\____/ `;
