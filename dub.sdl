@@ -4,7 +4,7 @@ description "A meta tic-tac-toe game written in D with both a Command Line Windo
 authors "dkorpel"
 copyright "Copyright © 2018, dkorpel"
 license "BSD 2-clause"
-dependency "scone" version="~>2.0.0-pre.2"
+dependency "scone" version="~>2.1.0"
 targetPath "build"
 targetType "executable"
 excludedSourceFiles "source/jsdraw.d" // This file is only for WebAssembly which isn't built with dub
